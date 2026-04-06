@@ -1,13 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Custom Text Colors - Light Mode */
+  --color-nav-text: #475569; /* Slate 600 */
+  --color-nav-active: #4f46e5; /* Indigo 600 */
+  --color-heading: #0f172a; /* Slate 900 */
+  --color-subheading: #334155; /* Slate 800 */
+  --color-body: #64748b; /* Slate 500 */
+  
+  /* Dark Mode Colors */
+  --color-dark-bg: #020617; /* Slate 950 */
+  --color-dark-card: #0f172a; /* Slate 900 */
+  --color-dark-heading: #f8fafc; /* Slate 50 */
+  --color-dark-subheading: #e2e8f0; /* Slate 200 */
+  --color-dark-body: #94a3b8; /* Slate 400 */
+  --color-dark-nav-text: #94a3b8; /* Slate 400 */
 }
 
 @layer base {
   body {
-    @apply font-sans;
+    @apply font-sans bg-white text-body transition-colors duration-300 antialiased;
+  }
+  
+  .dark body {
+    @apply bg-dark-bg text-dark-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-heading font-bold tracking-tight;
+  }
+
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-dark-heading;
+  }
+
+  p {
+    @apply text-body leading-relaxed font-medium;
+  }
+
+  .dark p {
+    @apply text-dark-body;
+  }
+}
+
+/* Typography Utilities */
+@layer utilities {
+  .text-nav {
+    @apply text-[14px] font-semibold tracking-tight text-nav-text transition-colors;
+  }
+  .dark .text-nav {
+    @apply text-dark-nav-text;
+  }
+  
+  .text-display-lg {
+    @apply text-4xl font-bold tracking-tighter text-heading;
+  }
+  .dark .text-display-lg {
+    @apply text-dark-heading;
+  }
+
+  .text-display-md {
+    @apply text-2xl font-bold tracking-tight text-heading;
+  }
+  .dark .text-display-md {
+    @apply text-dark-heading;
+  }
+
+  .text-display-sm {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400;
+  }
+  .dark .text-display-sm {
+    @apply text-slate-500;
   }
 }
 
@@ -23,4 +90,8 @@
 
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-800 hover:bg-slate-700;
 }

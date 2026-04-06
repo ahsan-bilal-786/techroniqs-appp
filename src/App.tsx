@@ -25,34 +25,38 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="attendance" element={<Attendance />} />
-          <Route path="leaves" element={<Leaves />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="projects/new" element={<ProjectForm />} />
-          <Route path="projects/edit/:id" element={<ProjectForm />} />
-          <Route path="tasks" element={<Tasks />} />
-          <Route path="tasks/new" element={<TaskForm />} />
-          <Route path="tasks/edit/:id" element={<TaskForm />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="people" element={<People />} />
-          <Route path="people/invite" element={<InviteMember />} />
-          <Route path="people/:id" element={<MemberDetail />} />
-          <Route path="finance" element={<Finance />} />
-          <Route path="finance/new" element={<TransactionForm />} />
-          <Route path="automation" element={<Automation />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="attendance" element={<Attendance />} />
+            <Route path="leaves" element={<Leaves />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="projects/new" element={<ProjectForm />} />
+            <Route path="projects/edit/:id" element={<ProjectForm />} />
+            <Route path="tasks" element={<Tasks />} />
+            <Route path="tasks/new" element={<TaskForm />} />
+            <Route path="tasks/edit/:id" element={<TaskForm />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="people" element={<People />} />
+            <Route path="people/invite" element={<InviteMember />} />
+            <Route path="people/:id" element={<MemberDetail />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="finance/new" element={<TransactionForm />} />
+            <Route path="automation" element={<Automation />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

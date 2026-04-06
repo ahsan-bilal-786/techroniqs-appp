@@ -24,7 +24,9 @@ import {
   CheckCircle2,
   Eye,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -42,7 +44,12 @@ const sidebarItems = [
   { icon: Zap, label: 'Automation', path: '/automation' },
 ];
 
+import { useTheme } from '../context/ThemeContext';
+
 export default function Layout() {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
@@ -64,7 +71,35 @@ export default function Layout() {
 
   const location = useLocation();
 
-  // Timer for checked-in duration
+  const handleAttendanceToggle = () => {
+    if (attendance.status === 'checked-out') {
+      setIsCheckInModalOpen(true);
+    } else {
+      setAttendance(prev => ({
+        ...prev,
+        status: 'checked-out',
+        checkInTime: null,
+        elapsedTime: '00:00:00'
+      }));
+    }
+  };
+
+  const handleCheckIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    const checkInDate = new Date(manualTime);
+    const now = new Date();
+    const isManual = !isSameMinute(checkInDate, now);
+
+    setAttendance({
+      status: 'checked-in',
+      checkInTime: checkInDate,
+      submissionTime: now,
+      isManual,
+      elapsedTime: '00:00:00'
+    });
+    setIsCheckInModalOpen(false);
+  };
+
   React.useEffect(() => {
     let interval: NodeJS.Timeout;
     if (attendance.status === 'checked-in' && attendance.checkInTime) {
@@ -83,41 +118,11 @@ export default function Layout() {
     return () => clearInterval(interval);
   }, [attendance.status, attendance.checkInTime]);
 
-  const handleCheckIn = (e: React.FormEvent) => {
-    e.preventDefault();
-    const selectedDate = new Date(manualTime);
-    const now = new Date();
-    
-    // If selected time is different from current time (ignoring seconds for simplicity in comparison)
-    const isManual = !isSameMinute(selectedDate, now);
-
-    setAttendance({
-      status: 'checked-in',
-      checkInTime: selectedDate,
-      submissionTime: now,
-      isManual: isManual,
-      elapsedTime: '00:00:00'
-    });
-    setIsCheckInModalOpen(false);
-  };
-
-  const handleAttendanceToggle = () => {
-    if (attendance.status === 'checked-out') {
-      setManualTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
-      setIsCheckInModalOpen(true);
-    } else {
-      setAttendance({
-        status: 'checked-out',
-        checkInTime: null,
-        submissionTime: null,
-        isManual: false,
-        elapsedTime: '00:00:00'
-      });
-    }
-  };
-
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
+    <div className={cn(
+      "flex h-screen font-sans transition-colors duration-300 overflow-hidden",
+      isDark ? "bg-dark-bg text-dark-body" : "bg-white text-slate-900"
+    )}>
       {/* Check-In Modal */}
       <AnimatePresence>
         {isCheckInModalOpen && (
@@ -133,22 +138,25 @@ export default function Layout() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className={cn(
+                "relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden",
+                isDark ? "bg-dark-card border border-slate-800" : "bg-white"
+              )}
             >
               <div className="p-8">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center">
                       <Clock size={20} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">Daily Check-In</h3>
-                      <p className="text-xs text-slate-500">Confirm your starting time</p>
+                      <h3 className="text-lg font-bold">Daily Check-In</h3>
+                      <p className="text-xs opacity-60">Confirm your starting time</p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setIsCheckInModalOpen(false)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all"
+                    className="p-2 opacity-40 hover:opacity-100 transition-all"
                   >
                     <X size={20} />
                   </button>
@@ -156,27 +164,33 @@ export default function Layout() {
 
                 <form onSubmit={handleCheckIn} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Check-In Time</label>
+                    <label className="text-sm font-bold opacity-70 ml-1">Check-In Time</label>
                     <div className="relative group">
-                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={18} />
+                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 opacity-40 group-focus-within:text-indigo-500 transition-colors" size={18} />
                       <input 
                         type="datetime-local" 
                         required
                         value={manualTime}
                         onChange={(e) => setManualTime(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                        className={cn(
+                          "w-full pl-12 pr-4 py-3 border border-transparent rounded-2xl focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium",
+                          isDark ? "bg-slate-800/50 text-white" : "bg-slate-50"
+                        )}
                       />
                     </div>
-                    <p className="text-[10px] text-slate-400 ml-1">
+                    <p className="text-[10px] opacity-40 ml-1">
                       If you forgot to check in earlier, you can adjust the time here.
                     </p>
                   </div>
 
-                  <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex gap-3">
+                  <div className={cn(
+                    "p-4 rounded-2xl flex gap-3",
+                    isDark ? "bg-amber-900/20 border border-amber-900/30" : "bg-amber-50 border border-amber-100"
+                  )}>
                     <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="text-xs font-bold text-amber-900 leading-tight">Review Required</p>
-                      <p className="text-[10px] text-amber-700 leading-relaxed">
+                      <p className={cn("text-xs font-bold leading-tight", isDark ? "text-amber-400" : "text-amber-900")}>Review Required</p>
+                      <p className={cn("text-[10px] leading-relaxed", isDark ? "text-amber-200/60" : "text-amber-700")}>
                         Manual check-in adjustments are flagged for administrative review to ensure accuracy.
                       </p>
                     </div>
@@ -195,23 +209,25 @@ export default function Layout() {
           </div>
         )}
       </AnimatePresence>
+
       {/* Sidebar */}
       <motion.aside 
         initial={false}
         animate={{ width: isSidebarOpen ? 260 : 80 }}
         className={cn(
-          "relative flex flex-col bg-white border-r border-slate-200 transition-all duration-300 ease-in-out z-50",
+          "relative flex flex-col transition-all duration-300 ease-in-out z-50",
+          isDark ? "bg-dark-card border-r border-slate-800" : "bg-white border-r border-slate-100",
           !isSidebarOpen && "items-center"
         )}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-slate-100">
+        <div className="h-20 flex items-center px-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-              <Zap size={20} fill="currentColor" />
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <Zap size={22} fill="currentColor" />
             </div>
             {isSidebarOpen && (
-              <span className="font-bold text-xl tracking-tight text-slate-800">
+              <span className="font-display font-bold text-2xl tracking-tighter">
                 Techroniqs
               </span>
             )}
@@ -219,7 +235,7 @@ export default function Layout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {sidebarItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -227,18 +243,18 @@ export default function Layout() {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
                   isActive 
-                    ? "bg-indigo-50 text-indigo-600 font-medium shadow-sm" 
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" 
+                    : "text-nav hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
                 )}
               >
-                <item.icon size={20} className={cn(isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600")} />
-                {isSidebarOpen && <span>{item.label}</span>}
+                <item.icon size={20} className={cn(isActive ? "text-white" : "opacity-60 group-hover:opacity-100")} />
+                {isSidebarOpen && <span className="font-bold text-sm tracking-tight">{item.label}</span>}
                 {isActive && isSidebarOpen && (
                   <motion.div 
                     layoutId="active-pill"
-                    className="absolute right-2 w-1.5 h-1.5 rounded-full bg-indigo-600"
+                    className="absolute right-3 w-1.5 h-1.5 rounded-full bg-white/40"
                   />
                 )}
               </Link>
@@ -247,117 +263,100 @@ export default function Layout() {
         </nav>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-slate-100 space-y-1">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group">
-            <HelpCircle size={20} className="text-slate-400 group-hover:text-slate-600" />
-            {isSidebarOpen && <span>Support</span>}
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-nav hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group">
+            <HelpCircle size={20} className="opacity-60 group-hover:opacity-100" />
+            {isSidebarOpen && <span className="font-bold text-sm tracking-tight">Support</span>}
           </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group">
-            <Settings size={20} className="text-slate-400 group-hover:text-slate-600" />
-            {isSidebarOpen && <span>Settings</span>}
-          </button>
+          <Link to="/settings" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-nav hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group">
+            <Settings size={20} className="opacity-60 group-hover:opacity-100" />
+            {isSidebarOpen && <span className="font-bold text-sm tracking-tight">Settings</span>}
+          </Link>
         </div>
 
         {/* Toggle Button */}
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-20 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all"
+          className={cn(
+            "absolute -right-3 top-24 w-6 h-6 rounded-full flex items-center justify-center shadow-sm transition-all border",
+            isDark ? "bg-slate-800 border-slate-700 text-slate-400" : "bg-white border-slate-200 text-slate-400"
+          )}
         >
-          {isSidebarOpen ? <X size={14} /> : <Menu size={14} />}
+          {isSidebarOpen ? <X size={12} /> : <Menu size={12} />}
         </button>
       </motion.aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-40">
+        <header className={cn(
+          "h-20 flex items-center justify-between px-8 z-40",
+          isDark ? "bg-dark-bg border-b border-slate-800" : "bg-white border-b border-slate-100"
+        )}>
           <div className="flex items-center gap-4 flex-1 max-w-xl">
             <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 opacity-40 group-focus-within:text-indigo-500 transition-colors" size={18} />
               <input 
                 type="text" 
-                placeholder="Search projects, tasks, or people..." 
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm"
+                placeholder="Search anything..." 
+                className={cn(
+                  "w-full pl-12 pr-4 py-3 border border-transparent rounded-2xl focus:border-indigo-200 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-sm font-medium",
+                  isDark ? "bg-slate-800/50 text-white" : "bg-slate-50"
+                )}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            {/* Theme Toggle */}
+            <button 
+              onClick={toggleTheme}
+              className={cn(
+                "p-2.5 rounded-xl transition-all border",
+                isDark ? "bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700" : "bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100"
+              )}
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
             {/* Attendance Widget */}
             <div className={cn(
-              "flex items-center gap-3 px-4 py-2 rounded-2xl border transition-all duration-300 group/attendance relative",
+              "flex items-center gap-4 px-5 py-2.5 rounded-2xl border transition-all duration-300 group/attendance relative",
               attendance.status === 'checked-in' 
-                ? "bg-emerald-50 border-emerald-100 text-emerald-700 shadow-sm shadow-emerald-100" 
-                : "bg-slate-50 border-slate-200 text-slate-500"
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-transparent" 
+                : isDark ? "bg-slate-800 border-slate-700 text-slate-400" : "bg-slate-50 border-slate-100 text-slate-500"
             )}>
               <div className="flex flex-col items-end">
-                <div className="flex items-center gap-1.5 mb-1">
-                  {attendance.isManual && (
-                    <div className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-md text-[9px] font-bold animate-pulse">
-                      <Eye size={10} />
-                      <span>REVIEW</span>
-                    </div>
-                  )}
+                <div className="flex items-center gap-1.5 mb-0.5">
                   <p className="text-[10px] font-bold uppercase tracking-wider leading-none opacity-70">
                     {attendance.status === 'checked-in' ? 'Working Since' : 'Attendance'}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {attendance.status === 'checked-in' && (
-                    <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                  )}
-                  <span className="text-sm font-bold tabular-nums">
+                  <span className="text-[15px] font-bold tabular-nums">
                     {attendance.status === 'checked-in' ? attendance.elapsedTime : 'Not Checked In'}
                   </span>
                 </div>
               </div>
-              <div className="h-8 w-px bg-current opacity-10 mx-1"></div>
+              <div className="h-8 w-px bg-current opacity-20 mx-1"></div>
               
-              {/* Tooltip for Manual Entry */}
-              {attendance.isManual && (
-                <div className="absolute top-full right-0 mt-2 w-64 bg-slate-900 text-white p-3 rounded-2xl shadow-2xl z-[60] opacity-0 group-hover/attendance:opacity-100 transition-opacity pointer-events-none border border-slate-800">
-                  <div className="flex items-center gap-2 mb-2 text-amber-400">
-                    <AlertCircle size={14} />
-                    <p className="text-[10px] font-bold uppercase tracking-widest">Manual Entry Details</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="opacity-60">Submitted At:</span>
-                      <span className="font-bold">{attendance.submissionTime ? format(attendance.submissionTime, 'MMM d, yyyy HH:mm:ss') : '-'}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="opacity-60">Selected Time:</span>
-                      <span className="font-bold text-amber-400">{attendance.checkInTime ? format(attendance.checkInTime, 'MMM d, yyyy HH:mm:ss') : '-'}</span>
-                    </div>
-                  </div>
-                  <div className="mt-3 pt-2 border-t border-white/10 flex items-center gap-2 text-[9px] text-emerald-400 font-medium">
-                    <Eye size={12} />
-                    <span>Awaiting Admin Approval</span>
-                  </div>
-                </div>
-              )}
               <button 
                 onClick={handleAttendanceToggle}
                 className={cn(
                   "flex items-center justify-center w-10 h-10 rounded-xl transition-all shadow-sm active:scale-95",
                   attendance.status === 'checked-in'
-                    ? "bg-white text-rose-500 hover:bg-rose-50 hover:text-rose-600 border border-rose-100"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-100"
+                    ? "bg-white/20 text-white hover:bg-white/30"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/20"
                 )}
-                title={attendance.status === 'checked-in' ? 'Check Out' : 'Check In'}
               >
                 {attendance.status === 'checked-in' ? <Square size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
               </button>
             </div>
 
-            <button className="relative p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+            <button className="relative p-2 opacity-60 hover:opacity-100 transition-all">
+              <Bell size={22} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800"></span>
             </button>
-            <div className="h-8 w-px bg-slate-200 mx-2"></div>
             
             <div className="relative">
               <button 
@@ -365,10 +364,10 @@ export default function Layout() {
                 className="flex items-center gap-3 pl-2 cursor-pointer group outline-none"
               >
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-semibold text-slate-800 leading-none">Ahsan Bilal</p>
-                  <p className="text-xs text-slate-500 mt-1">Admin</p>
+                  <p className="text-sm font-bold leading-none">Ahsan Bilal</p>
+                  <p className="text-[11px] opacity-60 mt-1 font-medium">Administrator</p>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-100 border-2 border-white shadow-sm overflow-hidden group-hover:ring-2 group-hover:ring-indigo-200 transition-all relative">
+                <div className="w-11 h-11 rounded-xl bg-indigo-100 border-2 border-white dark:border-slate-800 shadow-sm overflow-hidden group-hover:ring-4 group-hover:ring-indigo-500/10 transition-all relative">
                   <img 
                     src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ahsan" 
                     alt="User Avatar" 
@@ -376,59 +375,52 @@ export default function Layout() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <ChevronDown size={14} className={cn("text-slate-400 transition-transform duration-200", isProfileOpen && "rotate-180")} />
               </button>
 
               <AnimatePresence>
                 {isProfileOpen && (
                   <>
-                    {/* Backdrop for closing */}
-                    <div 
-                      className="fixed inset-0 z-10" 
-                      onClick={() => setIsProfileOpen(false)}
-                    />
+                    <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)} />
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                      className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-20 overflow-hidden"
+                      className={cn(
+                        "absolute right-0 mt-4 w-64 rounded-2xl shadow-2xl border py-2 z-20 overflow-hidden",
+                        isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100"
+                      )}
                     >
-                      <div className="px-4 py-3 border-b border-slate-50 mb-1">
-                        <p className="text-sm font-bold text-slate-900">Ahsan Bilal</p>
-                        <p className="text-xs text-slate-500 truncate">engr.ahsan.bilal@gmail.com</p>
+                      <div className="px-5 py-4 border-b border-slate-50 dark:border-slate-800 mb-1">
+                        <p className="text-sm font-bold">Ahsan Bilal</p>
+                        <p className="text-xs opacity-60 truncate">engr.ahsan.bilal@gmail.com</p>
                       </div>
                       
                       <div className="px-2 space-y-0.5">
                         <Link 
                           to="/profile"
                           onClick={() => setIsProfileOpen(false)}
-                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group"
                         >
-                          <User size={18} className="text-slate-400 group-hover:text-indigo-600" />
-                          <span className="font-medium">My Profile</span>
+                          <User size={18} className="opacity-40 group-hover:text-indigo-600" />
+                          <span>My Profile</span>
                         </Link>
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group">
-                          <CreditCard size={18} className="text-slate-400 group-hover:text-indigo-600" />
-                          <span className="font-medium">Billing</span>
-                        </button>
                         <Link 
                           to="/settings"
                           onClick={() => setIsProfileOpen(false)}
-                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all group"
                         >
-                          <Settings size={18} className="text-slate-400 group-hover:text-indigo-600" />
-                          <span className="font-medium">Account Settings</span>
+                          <Settings size={18} className="opacity-40 group-hover:text-indigo-600" />
+                          <span>Account Settings</span>
                         </Link>
                       </div>
 
-                      <div className="mt-2 pt-2 border-t border-slate-50 px-2">
+                      <div className="mt-2 pt-2 border-t border-slate-50 dark:border-slate-800 px-2">
                         <Link 
                           to="/login"
-                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-rose-600 hover:bg-rose-50 transition-all group"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all group"
                         >
                           <LogOut size={18} className="text-rose-400 group-hover:text-rose-600" />
-                          <span className="font-bold">Logout</span>
+                          <span>Logout</span>
                         </Link>
                       </div>
                     </motion.div>
@@ -440,7 +432,7 @@ export default function Layout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-8 scroll-smooth">
+        <main className="flex-1 overflow-y-auto p-10 scroll-smooth">
           <Outlet />
         </main>
       </div>

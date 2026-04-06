@@ -17,9 +17,12 @@ import {
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
 
+import { useTheme } from '../context/ThemeContext';
+
 export default function Settings() {
   const [activeSection, setActiveSection] = useState<'account' | 'security' | 'notifications' | 'display'>('account');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   const sections = [
     { id: 'account', label: 'Account Details', icon: User },
@@ -29,74 +32,91 @@ export default function Settings() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-20">
+    <div className="max-w-5xl mx-auto space-y-10 pb-20">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Account Settings</h1>
-        <p className="text-slate-500 mt-1">Manage your account preferences, security, and notification settings.</p>
+        <h1 className="text-4xl font-bold tracking-tighter">Account Settings</h1>
+        <p className={cn("mt-2 font-medium text-sm", isDark ? "text-slate-400" : "text-slate-500")}>
+          Manage your account preferences, security, and notification settings.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Sidebar Navigation */}
-        <div className="lg:col-span-1 space-y-2">
+        <div className="lg:col-span-1 space-y-2.5">
           {sections.map((section) => (
             <button
               key={section.id}
               onClick={() => setActiveSection(section.id as any)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all",
+                "w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all",
                 activeSection === section.id 
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
-                  : "text-slate-500 hover:bg-white hover:text-slate-900 border border-transparent hover:border-slate-200"
+                  ? "bg-indigo-600 text-white shadow-xl shadow-indigo-500/20" 
+                  : cn(
+                      "text-slate-500 hover:text-slate-900 border border-transparent",
+                      isDark ? "hover:bg-slate-800 hover:text-white" : "hover:bg-white hover:border-slate-200"
+                    )
               )}
             >
-              <section.icon size={18} />
+              <section.icon size={20} />
               <span>{section.label}</span>
             </button>
           ))}
         </div>
 
         {/* Content Area */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="lg:col-span-3 space-y-10">
           {activeSection === 'account' && (
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"
+              className={cn(
+                "rounded-3xl border transition-all overflow-hidden",
+                isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+              )}
             >
-              <div className="p-8 border-b border-slate-100">
-                <h3 className="text-lg font-bold text-slate-900">Account Information</h3>
-                <p className="text-sm text-slate-500 mt-1">Update your basic account details and contact info.</p>
+              <div className={cn("p-8 border-b", isDark ? "border-slate-800" : "border-slate-50")}>
+                <h3 className="text-xl font-bold tracking-tight">Account Information</h3>
+                <p className="text-sm opacity-50 mt-1 font-medium">Update your basic account details and contact info.</p>
               </div>
-              <div className="p-8 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Username</label>
+              <div className="p-8 space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2.5">
+                    <label className="text-sm font-bold opacity-70 ml-1">Username</label>
                     <input 
                       type="text" 
                       defaultValue="ahsan.bilal"
-                      className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                      className={cn(
+                        "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                        isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                      )}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                  <div className="space-y-2.5">
+                    <label className="text-sm font-bold opacity-70 ml-1">Email Address</label>
                     <input 
                       type="email" 
                       defaultValue="engr.ahsan.bilal@gmail.com"
-                      className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                      className={cn(
+                        "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                        isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                      )}
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Language</label>
-                  <select className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium appearance-none">
+                <div className="space-y-2.5">
+                  <label className="text-sm font-bold opacity-70 ml-1">Language</label>
+                  <select className={cn(
+                    "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium appearance-none focus:ring-4 focus:ring-indigo-500/10",
+                    isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                  )}>
                     <option>English (United States)</option>
                     <option>Urdu (Pakistan)</option>
                     <option>German (Germany)</option>
                   </select>
                 </div>
                 <div className="pt-4">
-                  <button className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                  <button className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20">
                     Save Changes
                   </button>
                 </div>
@@ -108,56 +128,77 @@ export default function Settings() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-8"
+              className="space-y-10"
             >
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-8 border-b border-slate-100">
-                  <h3 className="text-lg font-bold text-slate-900">Change Password</h3>
-                  <p className="text-sm text-slate-500 mt-1">Ensure your account is using a long, random password to stay secure.</p>
+              <div className={cn(
+                "rounded-3xl border transition-all overflow-hidden",
+                isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+              )}>
+                <div className={cn("p-8 border-b", isDark ? "border-slate-800" : "border-slate-50")}>
+                  <h3 className="text-xl font-bold tracking-tight">Change Password</h3>
+                  <p className="text-sm opacity-50 mt-1 font-medium">Ensure your account is using a long, random password to stay secure.</p>
                 </div>
-                <div className="p-8 space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Current Password</label>
+                <div className="p-8 space-y-8">
+                  <div className="space-y-2.5">
+                    <label className="text-sm font-bold opacity-70 ml-1">Current Password</label>
                     <input 
                       type="password" 
-                      className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                      className={cn(
+                        "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                        isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                      )}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 ml-1">New Password</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2.5">
+                      <label className="text-sm font-bold opacity-70 ml-1">New Password</label>
                       <input 
                         type="password" 
-                        className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                        className={cn(
+                          "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                          isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                        )}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 ml-1">Confirm New Password</label>
+                    <div className="space-y-2.5">
+                      <label className="text-sm font-bold opacity-70 ml-1">Confirm New Password</label>
                       <input 
                         type="password" 
-                        className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-2xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+                        className={cn(
+                          "w-full px-5 py-3.5 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                          isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+                        )}
                       />
                     </div>
                   </div>
                   <div className="pt-4">
-                    <button className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                    <button className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20">
                       Update Password
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                    <Smartphone size={24} />
+              <div className={cn(
+                "rounded-3xl border p-8 flex items-center justify-between transition-all",
+                isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+              )}>
+                <div className="flex items-center gap-6">
+                  <div className={cn(
+                    "w-14 h-14 rounded-2xl flex items-center justify-center transition-colors",
+                    isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"
+                  )}>
+                    <Smartphone size={28} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900">Two-Factor Authentication</h4>
-                    <p className="text-sm text-slate-500">Add an extra layer of security to your account.</p>
+                    <h4 className="text-lg font-bold tracking-tight">Two-Factor Authentication</h4>
+                    <p className="text-sm opacity-50 font-medium">Add an extra layer of security to your account.</p>
                   </div>
                 </div>
-                <button className="px-6 py-2 bg-emerald-50 text-emerald-600 rounded-xl font-bold hover:bg-emerald-100 transition-all">
+                <button className={cn(
+                  "px-8 py-3 rounded-xl font-bold transition-all",
+                  isDark ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                )}>
                   Enable
                 </button>
               </div>
@@ -168,13 +209,16 @@ export default function Settings() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"
+              className={cn(
+                "rounded-3xl border transition-all overflow-hidden",
+                isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+              )}
             >
-              <div className="p-8 border-b border-slate-100">
-                <h3 className="text-lg font-bold text-slate-900">Notification Preferences</h3>
-                <p className="text-sm text-slate-500 mt-1">Choose how you want to be notified about project updates.</p>
+              <div className={cn("p-8 border-b", isDark ? "border-slate-800" : "border-slate-50")}>
+                <h3 className="text-xl font-bold tracking-tight">Notification Preferences</h3>
+                <p className="text-sm opacity-50 mt-1 font-medium">Choose how you want to be notified about project updates.</p>
               </div>
-              <div className="p-8 space-y-6">
+              <div className="p-8 space-y-8">
                 {[
                   { title: 'Email Notifications', desc: 'Receive updates via your registered email.' },
                   { title: 'Push Notifications', desc: 'Receive real-time alerts on your browser.' },
@@ -183,12 +227,15 @@ export default function Settings() {
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between py-2">
                     <div>
-                      <h4 className="font-bold text-slate-900">{item.title}</h4>
-                      <p className="text-xs text-slate-500">{item.desc}</p>
+                      <h4 className="font-bold">{item.title}</h4>
+                      <p className="text-xs opacity-50 font-medium">{item.desc}</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" defaultChecked={idx < 2} />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className={cn(
+                        "w-12 h-6 rounded-full peer transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-6 peer-checked:bg-indigo-600",
+                        isDark ? "bg-slate-700" : "bg-slate-200"
+                      )}></div>
                     </label>
                   </div>
                 ))}
@@ -200,49 +247,62 @@ export default function Settings() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"
+              className={cn(
+                "rounded-3xl border transition-all overflow-hidden",
+                isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+              )}
             >
-              <div className="p-8 border-b border-slate-100">
-                <h3 className="text-lg font-bold text-slate-900">Display Settings</h3>
-                <p className="text-sm text-slate-500 mt-1">Customize your dashboard appearance.</p>
+              <div className={cn("p-8 border-b", isDark ? "border-slate-800" : "border-slate-50")}>
+                <h3 className="text-xl font-bold tracking-tight">Display Settings</h3>
+                <p className="text-sm opacity-50 mt-1 font-medium">Customize your dashboard appearance.</p>
               </div>
-              <div className="p-8 space-y-8">
-                <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-slate-700">Interface Theme</h4>
-                  <div className="grid grid-cols-2 gap-4">
+              <div className="p-8 space-y-10">
+                <div className="space-y-6">
+                  <h4 className="text-sm font-bold opacity-70">Interface Theme</h4>
+                  <div className="grid grid-cols-2 gap-6">
                     <button 
-                      onClick={() => setIsDarkMode(false)}
+                      onClick={() => setTheme('light')}
                       className={cn(
-                        "flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all",
-                        !isDarkMode ? "border-indigo-600 bg-indigo-50 text-indigo-600" : "border-slate-100 text-slate-500 hover:border-slate-200"
+                        "flex items-center justify-center gap-4 p-6 rounded-2xl border-2 transition-all",
+                        !isDark 
+                          ? "border-indigo-600 bg-indigo-500/5 text-indigo-600" 
+                          : "border-slate-800 text-slate-500 hover:border-slate-700"
                       )}
                     >
-                      <Sun size={20} />
+                      <Sun size={24} />
                       <span className="font-bold">Light Mode</span>
                     </button>
                     <button 
-                      onClick={() => setIsDarkMode(true)}
+                      onClick={() => setTheme('dark')}
                       className={cn(
-                        "flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all",
-                        isDarkMode ? "border-indigo-600 bg-indigo-50 text-indigo-600" : "border-slate-100 text-slate-500 hover:border-slate-200"
+                        "flex items-center justify-center gap-4 p-6 rounded-2xl border-2 transition-all",
+                        isDark 
+                          ? "border-indigo-500 bg-indigo-500/10 text-indigo-400" 
+                          : "border-slate-100 text-slate-500 hover:border-slate-200"
                       )}
                     >
-                      <Moon size={20} />
+                      <Moon size={24} />
                       <span className="font-bold">Dark Mode</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-slate-700">Compact Mode</h4>
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <Smartphone size={20} className="text-slate-400" />
-                      <span className="text-sm font-medium text-slate-700">Reduce padding and font sizes</span>
+                <div className="space-y-6">
+                  <h4 className="text-sm font-bold opacity-70">Compact Mode</h4>
+                  <div className={cn(
+                    "flex items-center justify-between p-6 rounded-2xl transition-colors",
+                    isDark ? "bg-slate-800/50" : "bg-slate-50"
+                  )}>
+                    <div className="flex items-center gap-4">
+                      <Smartphone size={24} className="opacity-40" />
+                      <span className="text-sm font-bold opacity-70">Reduce padding and font sizes</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className={cn(
+                        "w-12 h-6 rounded-full peer transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-6 peer-checked:bg-indigo-600",
+                        isDark ? "bg-slate-700" : "bg-slate-200"
+                      )}></div>
                     </label>
                   </div>
                 </div>
@@ -251,13 +311,16 @@ export default function Settings() {
           )}
 
           {/* Danger Zone */}
-          <div className="bg-rose-50 rounded-3xl p-8 border border-rose-100">
-            <div className="flex items-center gap-3 text-rose-600 mb-4">
-              <AlertTriangle size={24} />
-              <h3 className="text-lg font-bold">Danger Zone</h3>
+          <div className={cn(
+            "rounded-3xl p-10 border transition-all",
+            isDark ? "bg-rose-500/5 border-rose-500/20" : "bg-rose-50 border-rose-100"
+          )}>
+            <div className="flex items-center gap-4 text-rose-600 dark:text-rose-400 mb-6">
+              <AlertTriangle size={28} />
+              <h3 className="text-xl font-bold tracking-tight">Danger Zone</h3>
             </div>
-            <p className="text-sm text-rose-700 mb-6">Once you delete your account, there is no going back. Please be certain.</p>
-            <button className="px-8 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-100">
+            <p className="text-sm text-rose-700 dark:text-rose-300/70 mb-8 font-medium">Once you delete your account, there is no going back. Please be certain.</p>
+            <button className="px-10 py-4 bg-rose-600 text-white rounded-2xl font-bold hover:bg-rose-700 transition-all shadow-xl shadow-rose-500/20">
               Delete Account
             </button>
           </div>

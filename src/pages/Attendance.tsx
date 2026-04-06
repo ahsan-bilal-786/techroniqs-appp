@@ -71,7 +71,12 @@ const mockAttendance: AttendanceRecord[] = [
   }
 ];
 
+import { useTheme } from '../context/ThemeContext';
+
 export default function Attendance() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
   const [filter, setFilter] = useState<'all' | 'pending' | 'manual'>('all');
 
   const filteredRecords = mockAttendance.filter(record => {
@@ -81,20 +86,27 @@ export default function Attendance() {
   });
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20">
+    <div className="space-y-10 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Attendance Logs</h1>
-          <p className="text-slate-500 mt-1">Monitor team check-ins, manual adjustments, and approval status.</p>
+          <h1 className="text-4xl font-bold tracking-tighter">Attendance Logs</h1>
+          <p className={cn("mt-2 font-medium text-sm", isDark ? "text-slate-400" : "text-slate-500")}>
+            Monitor team check-ins, manual adjustments, and approval status.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
+        <div className="flex items-center gap-4">
+          <div className={cn(
+            "flex items-center gap-1 p-1 rounded-2xl",
+            isDark ? "bg-slate-800" : "bg-slate-100"
+          )}>
             <button 
               onClick={() => setFilter('all')}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-bold transition-all",
-                filter === 'all' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                "px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                filter === 'all' 
+                  ? (isDark ? "bg-slate-700 text-indigo-400 shadow-lg" : "bg-white text-indigo-600 shadow-sm") 
+                  : "text-slate-500 hover:text-slate-700"
               )}
             >
               All
@@ -102,8 +114,10 @@ export default function Attendance() {
             <button 
               onClick={() => setFilter('manual')}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-bold transition-all",
-                filter === 'manual' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                "px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                filter === 'manual' 
+                  ? (isDark ? "bg-slate-700 text-indigo-400 shadow-lg" : "bg-white text-indigo-600 shadow-sm") 
+                  : "text-slate-500 hover:text-slate-700"
               )}
             >
               Manual
@@ -111,8 +125,10 @@ export default function Attendance() {
             <button 
               onClick={() => setFilter('pending')}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2",
-                filter === 'pending' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                "px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2",
+                filter === 'pending' 
+                  ? (isDark ? "bg-slate-700 text-indigo-400 shadow-lg" : "bg-white text-indigo-600 shadow-sm") 
+                  : "text-slate-500 hover:text-slate-700"
               )}
             >
               Pending
@@ -123,69 +139,105 @@ export default function Attendance() {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 size={24} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className={cn(
+          "p-8 rounded-3xl border transition-all",
+          isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+        )}>
+          <div className="flex items-center gap-5 mb-6">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl flex items-center justify-center transition-colors",
+              isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"
+            )}>
+              <CheckCircle2 size={28} />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">On Time Today</p>
-              <h3 className="text-2xl font-bold text-slate-900">12/15</h3>
+              <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">On Time Today</p>
+              <h3 className="text-3xl font-bold tracking-tight">12/15</h3>
             </div>
           </div>
-          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-            <div className="bg-emerald-500 h-full w-[80%]"></div>
+          <div className={cn(
+            "w-full h-2 rounded-full overflow-hidden",
+            isDark ? "bg-slate-800" : "bg-slate-100"
+          )}>
+            <div className="bg-emerald-500 h-full w-[80%] shadow-[0_0_12px_rgba(16,185,129,0.4)]"></div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-              <Eye size={24} />
+        <div className={cn(
+          "p-8 rounded-3xl border transition-all",
+          isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+        )}>
+          <div className="flex items-center gap-5 mb-6">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl flex items-center justify-center transition-colors",
+              isDark ? "bg-amber-500/10 text-amber-400" : "bg-amber-50 text-amber-600"
+            )}>
+              <Eye size={28} />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Pending Review</p>
-              <h3 className="text-2xl font-bold text-slate-900">1</h3>
+              <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Pending Review</p>
+              <h3 className="text-3xl font-bold tracking-tight">1</h3>
             </div>
           </div>
-          <p className="text-xs text-slate-500">Manual adjustments awaiting approval.</p>
+          <p className="text-sm font-medium opacity-50">Manual adjustments awaiting approval.</p>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <Clock size={24} />
+        <div className={cn(
+          "p-8 rounded-3xl border transition-all",
+          isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+        )}>
+          <div className="flex items-center gap-5 mb-6">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl flex items-center justify-center transition-colors",
+              isDark ? "bg-indigo-500/10 text-indigo-400" : "bg-indigo-50 text-indigo-600"
+            )}>
+              <Clock size={28} />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg. Work Hours</p>
-              <h3 className="text-2xl font-bold text-slate-900">8.4h</h3>
+              <p className="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Avg. Work Hours</p>
+              <h3 className="text-3xl font-bold tracking-tight">8.4h</h3>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-emerald-600 text-xs font-bold">
-            <ArrowUpRight size={14} />
+          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-sm font-bold">
+            <ArrowUpRight size={16} />
             <span>+0.2h from last week</span>
           </div>
         </div>
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className={cn(
+        "rounded-3xl border transition-all overflow-hidden",
+        isDark ? "bg-dark-card border-slate-800" : "bg-white border-slate-100 shadow-sm"
+      )}>
+        <div className={cn(
+          "p-8 border-b flex flex-col md:flex-row md:items-center justify-between gap-6",
+          isDark ? "border-slate-800" : "border-slate-100"
+        )}>
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
               type="text" 
               placeholder="Search by employee name..." 
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm"
+              className={cn(
+                "w-full pl-12 pr-5 py-3 border rounded-2xl outline-none transition-all text-sm font-medium focus:ring-4 focus:ring-indigo-500/10",
+                isDark ? "bg-slate-800/50 border-slate-700 text-white focus:border-indigo-500" : "bg-slate-50 border-transparent focus:bg-white focus:border-indigo-200"
+              )}
             />
           </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
-              <Filter size={20} />
+          <div className="flex items-center gap-3">
+            <button className={cn(
+              "p-3 rounded-xl transition-all",
+              isDark ? "text-slate-500 hover:text-slate-300 hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+            )}>
+              <Filter size={22} />
             </button>
-            <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
-              <Calendar size={20} />
+            <button className={cn(
+              "p-3 rounded-xl transition-all",
+              isDark ? "text-slate-500 hover:text-slate-300 hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+            )}>
+              <Calendar size={22} />
             </button>
           </div>
         </div>
@@ -193,90 +245,105 @@ export default function Attendance() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Employee</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Check-In Details</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Check-Out</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider"></th>
+              <tr className={cn(
+                "border-b",
+                isDark ? "bg-slate-800/50 border-slate-800" : "bg-slate-50/50 border-slate-100"
+              )}>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Employee</th>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Check-In Details</th>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Check-Out</th>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Type</th>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-5 text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className={cn("divide-y", isDark ? "divide-slate-800" : "divide-slate-50")}>
               {filteredRecords.map((record) => (
-                <tr key={record.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold overflow-hidden border-2 border-white shadow-sm">
+                <tr key={record.id} className={cn(
+                  "transition-colors group",
+                  isDark ? "hover:bg-slate-800/30" : "hover:bg-slate-50/50"
+                )}>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        "w-12 h-12 rounded-2xl p-0.5 border-2 transition-all",
+                        isDark ? "bg-slate-800 border-slate-700" : "bg-indigo-50 border-white shadow-sm"
+                      )}>
                         <img 
                           src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${record.employeeName}`} 
                           alt={record.employeeName} 
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-xl"
                           referrerPolicy="no-referrer"
                         />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900">{record.employeeName}</p>
-                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{record.employeeRole}</p>
+                        <p className="font-bold">{record.employeeName}</p>
+                        <p className="text-[10px] opacity-40 font-bold uppercase tracking-widest">{record.employeeRole}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <ArrowDownRight size={14} className="text-emerald-500" />
-                        <span className="text-sm font-bold text-slate-800">{format(record.checkIn, 'HH:mm')}</span>
-                        <span className="text-[10px] text-slate-400 font-medium">{format(record.checkIn, 'MMM d, yyyy')}</span>
+                  <td className="px-8 py-5">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2.5">
+                        <ArrowDownRight size={16} className="text-emerald-500" />
+                        <span className="text-sm font-bold">{format(record.checkIn, 'HH:mm')}</span>
+                        <span className="text-[10px] opacity-40 font-bold">{format(record.checkIn, 'MMM d, yyyy')}</span>
                       </div>
                       {record.isManual && (
-                        <div className="flex items-center gap-2 pl-5">
-                          <p className="text-[10px] text-slate-400">
-                            Submitted at: <span className="font-bold text-slate-600">{format(record.submissionTime, 'HH:mm')}</span>
+                        <div className="flex items-center gap-2 pl-6">
+                          <p className="text-[10px] opacity-40 font-bold">
+                            Submitted at: <span className="text-indigo-600 dark:text-indigo-400">{format(record.submissionTime, 'HH:mm')}</span>
                           </p>
                         </div>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5">
                     {record.checkOut ? (
-                      <div className="flex items-center gap-2">
-                        <ArrowUpRight size={14} className="text-rose-500" />
-                        <span className="text-sm font-bold text-slate-800">{format(record.checkOut, 'HH:mm')}</span>
-                        <span className="text-[10px] text-slate-400 font-medium">{format(record.checkOut, 'MMM d, yyyy')}</span>
+                      <div className="flex items-center gap-2.5">
+                        <ArrowUpRight size={16} className="text-rose-500" />
+                        <span className="text-sm font-bold">{format(record.checkOut, 'HH:mm')}</span>
+                        <span className="text-[10px] opacity-40 font-bold">{format(record.checkOut, 'MMM d, yyyy')}</span>
                       </div>
                     ) : (
-                      <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-md uppercase tracking-wider animate-pulse">
+                      <span className={cn(
+                        "px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider animate-pulse",
+                        isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600"
+                      )}>
                         Active Now
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5">
                     {record.isManual ? (
-                      <div className="flex items-center gap-1.5 text-amber-600">
-                        <AlertCircle size={14} />
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                        <AlertCircle size={16} />
                         <span className="text-xs font-bold">Manual</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-slate-400">
-                        <Clock size={14} />
-                        <span className="text-xs font-medium">Automatic</span>
+                      <div className="flex items-center gap-2 opacity-40">
+                        <Clock size={16} />
+                        <span className="text-xs font-bold">Automatic</span>
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5">
                     <div className={cn(
-                      "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                      record.status === 'approved' ? "bg-emerald-50 text-emerald-600" :
-                      record.status === 'pending' ? "bg-amber-50 text-amber-600" :
-                      "bg-rose-50 text-rose-600"
+                      "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                      record.status === 'approved' ? (isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 text-emerald-600") :
+                      record.status === 'pending' ? (isDark ? "bg-amber-500/10 text-amber-400" : "bg-amber-50 text-amber-600") :
+                      (isDark ? "bg-rose-500/10 text-rose-400" : "bg-rose-50 text-rose-600")
                     )}>
-                      {record.status === 'pending' && <Eye size={12} className="animate-pulse" />}
+                      {record.status === 'pending' && <Eye size={14} className="animate-pulse" />}
                       {record.status}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
-                      <MoreHorizontal size={20} />
+                  <td className="px-8 py-5 text-right">
+                    <button className={cn(
+                      "p-2.5 rounded-xl transition-all",
+                      isDark ? "text-slate-500 hover:text-indigo-400 hover:bg-slate-800" : "text-slate-400 hover:text-indigo-600 hover:bg-indigo-50"
+                    )}>
+                      <MoreHorizontal size={22} />
                     </button>
                   </td>
                 </tr>
@@ -290,25 +357,25 @@ export default function Attendance() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-200"
+        className="bg-indigo-600 rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/20"
       >
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
-              <ShieldCheck size={28} />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-3xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10">
+              <ShieldCheck size={32} />
             </div>
             <div>
-              <h3 className="text-xl font-bold">Administrative Review</h3>
-              <p className="text-indigo-100 text-sm mt-1">You have 1 manual check-in adjustment awaiting your review.</p>
+              <h3 className="text-2xl font-bold tracking-tight">Administrative Review</h3>
+              <p className="text-indigo-100 font-medium mt-1">You have 1 manual check-in adjustment awaiting your review.</p>
             </div>
           </div>
-          <button className="px-8 py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-indigo-50 transition-all shadow-lg">
+          <button className="px-10 py-4 bg-white text-indigo-600 rounded-2xl font-bold hover:bg-indigo-50 transition-all shadow-xl shadow-black/10">
             Review Now
           </button>
         </div>
         {/* Decorative Circles */}
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
-        <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
       </motion.div>
     </div>
   );
