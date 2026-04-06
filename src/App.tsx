@@ -18,14 +18,22 @@ import InviteMember from './pages/InviteMember';
 import Finance from './pages/Finance';
 import TransactionForm from './pages/TransactionForm';
 import Automation from './pages/Automation';
+import Attendance from './pages/Attendance';
+import Leaves from './pages/Leaves';
+import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 
 export default function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="leaves" element={<Leaves />} />
           <Route path="projects/new" element={<ProjectForm />} />
           <Route path="projects/edit/:id" element={<ProjectForm />} />
           <Route path="tasks" element={<Tasks />} />
