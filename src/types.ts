@@ -11,6 +11,22 @@ export interface Employee {
   avatar?: string;
   status: 'active' | 'inactive';
   joinedAt: string;
+  designation: string;
+  nicNumber: string;
+  contactNumber: string;
+  permanentAddress: string;
+  currentAddress: string;
+  nicFront?: string;
+  nicBack?: string;
+  personalEmail: string;
+  linkedinProfile?: string;
+  githubProfile?: string;
+  bankName: string;
+  vehicleNumber?: string;
+  ibanNumber: string;
+  dateOfBirth: string;
+  salary: string;
+  technicalSkills: string[];
 }
 
 export interface Project {

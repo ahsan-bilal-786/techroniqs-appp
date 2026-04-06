@@ -9,7 +9,11 @@ import {
   ShieldCheck,
   Zap,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  User,
+  Globe,
+  MapPin,
+  Award
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -21,7 +25,22 @@ export default function InviteMember() {
     email: '',
     role: '',
     department: '',
-    accessLevel: 'member'
+    accessLevel: 'member',
+    designation: '',
+    joinDate: '',
+    nicNumber: '',
+    contactNumber: '',
+    permanentAddress: '',
+    currentAddress: '',
+    personalEmail: '',
+    linkedinProfile: '',
+    githubProfile: '',
+    bankName: '',
+    vehicleNumber: '',
+    ibanNumber: '',
+    dateOfBirth: '',
+    salary: '',
+    technicalSkills: '',
   });
 
   return (
@@ -42,71 +61,134 @@ export default function InviteMember() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Invite Team Member</h1>
-              <p className="text-slate-500 text-sm">Send an invitation to join the Techroniqs ERP workspace.</p>
+              <p className="text-slate-500 text-sm">Fill in the employee details to create their profile and send an invitation.</p>
             </div>
           </div>
         </div>
 
-        <form className="p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Full Name</label>
-              <input 
-                type="text" 
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="e.g., John Doe"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-              />
+        <form className="p-8 space-y-12">
+          {/* Personal Information */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <User size={20} className="text-indigo-600" />
+              Personal Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormItem label="Full Name" value={formData.name} onChange={(v) => setFormData({...formData, name: v})} placeholder="e.g., Ahsan Bilal" />
+              <FormItem label="Personal Email" value={formData.personalEmail} onChange={(v) => setFormData({...formData, personalEmail: v})} placeholder="e.g., personal@email.com" type="email" />
+              <FormItem label="Contact Number" value={formData.contactNumber} onChange={(v) => setFormData({...formData, contactNumber: v})} placeholder="e.g., +92 300 1234567" />
+              <FormItem label="Date of Birth" value={formData.dateOfBirth} onChange={(v) => setFormData({...formData, dateOfBirth: v})} type="date" />
+              <FormItem label="NIC Number" value={formData.nicNumber} onChange={(v) => setFormData({...formData, nicNumber: v})} placeholder="e.g., 35202-1234567-1" />
+              <FormItem label="Vehicle Number" value={formData.vehicleNumber} onChange={(v) => setFormData({...formData, vehicleNumber: v})} placeholder="e.g., LEC-1234" />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <Mail size={16} className="text-slate-400" />
-                <span>Email Address</span>
-              </label>
-              <input 
-                type="email" 
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                placeholder="e.g., john@techroniqs.com"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-              />
-            </div>
-          </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <Briefcase size={16} className="text-slate-400" />
-                <span>Job Role</span>
-              </label>
-              <input 
-                type="text" 
-                value={formData.role}
-                onChange={(e) => setFormData({...formData, role: e.target.value})}
-                placeholder="e.g., Senior Developer"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
+          {/* Professional Information */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Briefcase size={20} className="text-indigo-600" />
+              Professional Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormItem label="Work Email" value={formData.email} onChange={(v) => setFormData({...formData, email: v})} placeholder="e.g., ahsan@techroniqs.com" type="email" />
+              <FormItem label="Designation" value={formData.designation} onChange={(v) => setFormData({...formData, designation: v})} placeholder="e.g., Senior Full Stack Developer" />
+              <FormItem label="Join Date" value={formData.joinDate} onChange={(v) => setFormData({...formData, joinDate: v})} type="date" />
+              <FormItem label="Salary (Monthly)" value={formData.salary} onChange={(v) => setFormData({...formData, salary: v})} placeholder="e.g., PKR 250,000" />
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">Department</label>
+                <select 
+                  value={formData.department}
+                  onChange={(e) => setFormData({...formData, department: e.target.value})}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none transition-all appearance-none"
+                >
+                  <option value="">Select Department</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Product">Product</option>
+                  <option value="Design">Design</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="HR">HR</option>
+                </select>
+              </div>
+              <FormItem label="Technical Skills" value={formData.technicalSkills} onChange={(v) => setFormData({...formData, technicalSkills: v})} placeholder="e.g., React, Node.js, Flutter (comma separated)" />
+            </div>
+          </section>
+
+          {/* Address Information */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <MapPin size={20} className="text-indigo-600" />
+              Address Information
+            </h3>
+            <div className="space-y-6">
+              <FormItem label="Current Address" value={formData.currentAddress} onChange={(v) => setFormData({...formData, currentAddress: v})} placeholder="e.g., Apartment #5B, Gulberg Heights, Lahore" fullWidth />
+              <FormItem label="Permanent Address" value={formData.permanentAddress} onChange={(v) => setFormData({...formData, permanentAddress: v})} placeholder="e.g., House #123, Street #4, Model Town, Lahore" fullWidth />
+            </div>
+          </section>
+
+          {/* Bank Information */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Award size={20} className="text-indigo-600" />
+              Bank Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormItem label="Bank Name" value={formData.bankName} onChange={(v) => setFormData({...formData, bankName: v})} placeholder="e.g., Habib Bank Limited (HBL)" />
+              <FormItem label="IBAN Number" value={formData.ibanNumber} onChange={(v) => setFormData({...formData, ibanNumber: v})} placeholder="e.g., PK70HABB0012345678901234" />
+            </div>
+          </section>
+
+          {/* Social Profiles */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Globe size={20} className="text-indigo-600" />
+              Social Profiles
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormItem label="LinkedIn Profile" value={formData.linkedinProfile} onChange={(v) => setFormData({...formData, linkedinProfile: v})} placeholder="e.g., https://linkedin.com/in/username" />
+              <FormItem label="GitHub Profile" value={formData.githubProfile} onChange={(v) => setFormData({...formData, githubProfile: v})} placeholder="e.g., https://github.com/username" />
+            </div>
+            <div className="space-y-4 mt-4">
+              <label className="text-sm font-bold text-slate-700">Additional Social Profiles</label>
+              <p className="text-xs text-slate-500 italic">Add other platforms like Twitter, Behance, etc. (Platform: URL)</p>
+              <textarea 
+                placeholder="Twitter: https://twitter.com/username&#10;Behance: https://behance.net/username"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none transition-all text-sm h-24"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <ShieldCheck size={16} className="text-slate-400" />
-                <span>Department</span>
-              </label>
-              <select 
-                value={formData.department}
-                onChange={(e) => setFormData({...formData, department: e.target.value})}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none transition-all appearance-none"
-              >
-                <option value="">Select Department</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Product">Product</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="HR">HR</option>
-              </select>
+          </section>
+
+          {/* Contact Information */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Mail size={20} className="text-indigo-600" />
+              Additional Contact Information
+            </h3>
+            <div className="space-y-4">
+              <p className="text-xs text-slate-500 italic">Add emergency contacts, Skype, etc. (Label: Value)</p>
+              <textarea 
+                placeholder="Emergency Contact: +92 321 7654321&#10;Skype: username.dev"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none transition-all text-sm h-24"
+              />
             </div>
-          </div>
+          </section>
+
+          {/* Documents */}
+          <section className="space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <ShieldCheck size={20} className="text-indigo-600" />
+              Documents (NIC)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">NIC Front Image</label>
+                <input type="file" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700">NIC Back Image</label>
+                <input type="file" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" />
+              </div>
+            </div>
+          </section>
 
           <div className="space-y-4">
             <label className="text-sm font-bold text-slate-700">Access Level</label>
@@ -139,18 +221,6 @@ export default function InviteMember() {
             </div>
           </div>
 
-          <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm">
-              <Zap size={20} />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-sm font-bold text-indigo-900 mb-1">Automation Note</h4>
-              <p className="text-xs text-indigo-800 leading-relaxed">
-                Inviting a new member will automatically trigger the "Onboarding Workflow", which includes setting up their default tasks and Slack channel access.
-              </p>
-            </div>
-          </div>
-
           <div className="pt-6 flex items-center justify-end gap-4 border-t border-slate-100">
             <button 
               type="button"
@@ -169,6 +239,21 @@ export default function InviteMember() {
           </div>
         </form>
       </div>
+    </div>
+  );
+}
+
+function FormItem({ label, value, onChange, placeholder, type = "text", fullWidth = false }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; fullWidth?: boolean }) {
+  return (
+    <div className={cn("space-y-2", fullWidth ? "md:col-span-2" : "")}>
+      <label className="text-sm font-bold text-slate-700">{label}</label>
+      <input 
+        type={type} 
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-sm font-medium"
+      />
     </div>
   );
 }

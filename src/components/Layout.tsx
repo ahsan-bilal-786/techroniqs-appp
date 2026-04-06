@@ -400,18 +400,26 @@ export default function Layout() {
                       </div>
                       
                       <div className="px-2 space-y-0.5">
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group">
+                        <Link 
+                          to="/profile"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group"
+                        >
                           <User size={18} className="text-slate-400 group-hover:text-indigo-600" />
                           <span className="font-medium">My Profile</span>
-                        </button>
+                        </Link>
                         <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group">
                           <CreditCard size={18} className="text-slate-400 group-hover:text-indigo-600" />
                           <span className="font-medium">Billing</span>
                         </button>
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group">
+                        <Link 
+                          to="/settings"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all group"
+                        >
                           <Settings size={18} className="text-slate-400 group-hover:text-indigo-600" />
                           <span className="font-medium">Account Settings</span>
-                        </button>
+                        </Link>
                       </div>
 
                       <div className="mt-2 pt-2 border-t border-slate-50 px-2">

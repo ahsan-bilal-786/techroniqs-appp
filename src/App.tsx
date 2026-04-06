@@ -20,6 +20,8 @@ import TransactionForm from './pages/TransactionForm';
 import Automation from './pages/Automation';
 import Attendance from './pages/Attendance';
 import Leaves from './pages/Leaves';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="attendance" element={<Attendance />} />
           <Route path="leaves" element={<Leaves />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="projects/new" element={<ProjectForm />} />
           <Route path="projects/edit/:id" element={<ProjectForm />} />
           <Route path="tasks" element={<Tasks />} />

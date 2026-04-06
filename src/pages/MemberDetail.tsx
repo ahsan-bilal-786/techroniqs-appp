@@ -16,7 +16,13 @@ import {
   ExternalLink,
   Github,
   Linkedin,
-  Twitter
+  Twitter,
+  Globe,
+  ShieldCheck,
+  Award,
+  User,
+  Zap,
+  ChevronRight
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -60,7 +66,7 @@ export default function MemberDetail() {
               </div>
               <div className="mt-4">
                 <h2 className="text-2xl font-bold text-slate-900">{employee.name}</h2>
-                <p className="text-indigo-600 font-bold text-sm tracking-wide uppercase">{employee.role}</p>
+                <p className="text-indigo-600 font-bold text-sm tracking-wide uppercase">{employee.designation}</p>
                 <p className="text-slate-500 text-sm mt-1">{employee.department}</p>
               </div>
 
@@ -81,11 +87,11 @@ export default function MemberDetail() {
               </div>
               <div className="flex items-center gap-3 text-slate-600">
                 <Phone size={18} className="text-slate-400" />
-                <span className="font-medium">+1 (555) 123-4567</span>
+                <span className="font-medium">{employee.contactNumber}</span>
               </div>
               <div className="flex items-center gap-3 text-slate-600">
                 <MapPin size={18} className="text-slate-400" />
-                <span className="font-medium">San Francisco, CA</span>
+                <span className="font-medium truncate">{employee.currentAddress}</span>
               </div>
               <div className="flex items-center gap-3 text-slate-600">
                 <Calendar size={18} className="text-slate-400" />
@@ -94,16 +100,24 @@ export default function MemberDetail() {
             </div>
 
             <div className="px-6 py-6 border-t border-slate-100 flex items-center justify-center gap-6">
-              <button className="text-slate-400 hover:text-slate-900 transition-colors"><Github size={20} /></button>
-              <button className="text-slate-400 hover:text-slate-900 transition-colors"><Linkedin size={20} /></button>
+              {employee.githubProfile && (
+                <a href={employee.githubProfile} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-900 transition-colors">
+                  <Github size={20} />
+                </a>
+              )}
+              {employee.linkedinProfile && (
+                <a href={employee.linkedinProfile} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-900 transition-colors">
+                  <Linkedin size={20} />
+                </a>
+              )}
               <button className="text-slate-400 hover:text-slate-900 transition-colors"><Twitter size={20} /></button>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <h3 className="font-bold text-slate-900 mb-4">Skills & Expertise</h3>
+            <h3 className="font-bold text-slate-900 mb-4">Technical Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {['React', 'TypeScript', 'Node.js', 'Firebase', 'Tailwind', 'System Design'].map(skill => (
+              {employee.technicalSkills.map(skill => (
                 <span key={skill} className="px-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded-lg border border-slate-100">
                   {skill}
                 </span>
@@ -114,6 +128,83 @@ export default function MemberDetail() {
 
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-8">
+          {/* Detailed Information Sections */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900">Employee Profile Details</h3>
+            </div>
+            <div className="p-8 space-y-10">
+              {/* Personal & Professional */}
+              <section className="space-y-6">
+                <h4 className="text-sm font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                  <User size={16} />
+                  Personal & Professional
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <DetailItem label="Full Name" value={employee.name} />
+                  <DetailItem label="Designation" value={employee.designation} />
+                  <DetailItem label="Personal Email" value={employee.personalEmail} />
+                  <DetailItem label="Date of Birth" value={employee.dateOfBirth} />
+                  <DetailItem label="NIC Number" value={employee.nicNumber} />
+                  <DetailItem label="Salary" value={employee.salary} />
+                </div>
+              </section>
+
+              {/* Address Details */}
+              <section className="space-y-6">
+                <h4 className="text-sm font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                  <MapPin size={16} />
+                  Address Details
+                </h4>
+                <div className="space-y-4">
+                  <DetailItem label="Current Address" value={employee.currentAddress} />
+                  <DetailItem label="Permanent Address" value={employee.permanentAddress} />
+                </div>
+              </section>
+
+              {/* Bank & Assets */}
+              <section className="space-y-6">
+                <h4 className="text-sm font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                  <Award size={16} />
+                  Bank & Assets
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <DetailItem label="Bank Name" value={employee.bankName} />
+                  <DetailItem label="IBAN Number" value={employee.ibanNumber} />
+                  <DetailItem label="Vehicle Number" value={employee.vehicleNumber || 'N/A'} />
+                </div>
+              </section>
+
+              {/* Documents */}
+              {(employee.nicFront || employee.nicBack) && (
+                <section className="space-y-6">
+                  <h4 className="text-sm font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                    <ShieldCheck size={16} />
+                    NIC Documents
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {employee.nicFront && (
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">NIC Front</p>
+                        <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+                          <img src={employee.nicFront} alt="NIC Front" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        </div>
+                      </div>
+                    )}
+                    {employee.nicBack && (
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">NIC Back</p>
+                        <div className="aspect-[1.6/1] rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+                          <img src={employee.nicBack} alt="NIC Back" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+            </div>
+          </div>
+
           {/* Stats Overview */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
@@ -175,32 +266,19 @@ export default function MemberDetail() {
               ))}
             </div>
           </div>
-
-          {/* Recent Reports */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Recent Reports</h3>
-              <button className="text-indigo-600 text-sm font-bold hover:underline">View History</button>
-            </div>
-            <div className="divide-y divide-slate-50">
-              {employeeReports.map((report) => (
-                <div key={report.id} className="p-6 hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <Calendar size={16} className="text-slate-400" />
-                      <span className="text-sm font-bold text-slate-800">{new Date(report.date).toLocaleDateString()}</span>
-                    </div>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{report.hoursWorked} Hours Worked</span>
-                  </div>
-                  <p className="text-sm text-slate-600 leading-relaxed italic">
-                    "{report.blockers || 'No blockers reported today. Progressing as planned.'}"
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{label}</p>
+      <p className="text-sm font-bold text-slate-700 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
+        {value || 'Not Provided'}
+      </p>
     </div>
   );
 }

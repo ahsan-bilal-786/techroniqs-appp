@@ -9,7 +9,23 @@ export const mockEmployees: Employee[] = [
     department: 'Engineering',
     status: 'active',
     joinedAt: '2023-01-15',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahsan'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahsan',
+    designation: 'Senior Full Stack Developer',
+    nicNumber: '35202-1234567-1',
+    contactNumber: '+92 300 1234567',
+    permanentAddress: 'House #123, Street #4, Model Town, Lahore',
+    currentAddress: 'Apartment #5B, Gulberg Heights, Lahore',
+    nicFront: 'https://picsum.photos/seed/nicfront/400/250',
+    nicBack: 'https://picsum.photos/seed/nicback/400/250',
+    personalEmail: 'engr.ahsan.bilal@gmail.com',
+    linkedinProfile: 'https://linkedin.com/in/ahsanbilal',
+    githubProfile: 'https://github.com/ahsanbilal',
+    bankName: 'Habib Bank Limited (HBL)',
+    vehicleNumber: 'LEC-1234',
+    ibanNumber: 'PK70HABB0012345678901234',
+    dateOfBirth: '1995-05-20',
+    salary: 'PKR 250,000',
+    technicalSkills: ['React', 'TypeScript', 'Node.js', 'Flutter', 'Firebase', 'PostgreSQL', 'Tailwind CSS', 'Docker']
   },
   {
     id: 'emp-2',
@@ -19,7 +35,18 @@ export const mockEmployees: Employee[] = [
     department: 'Product',
     status: 'active',
     joinedAt: '2023-03-10',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+    designation: 'Product Lead',
+    nicNumber: '35202-7654321-2',
+    contactNumber: '+92 321 7654321',
+    permanentAddress: 'House #456, DHA Phase 5, Lahore',
+    currentAddress: 'House #456, DHA Phase 5, Lahore',
+    personalEmail: 'sarah.khan.personal@gmail.com',
+    bankName: 'Meezan Bank',
+    ibanNumber: 'PK12MEZN0098765432109876',
+    dateOfBirth: '1996-08-12',
+    salary: 'PKR 200,000',
+    technicalSkills: ['Product Strategy', 'Agile', 'Scrum', 'Jira', 'Market Research']
   },
   {
     id: 'emp-3',
@@ -29,7 +56,18 @@ export const mockEmployees: Employee[] = [
     department: 'Design',
     status: 'active',
     joinedAt: '2023-05-20',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zain'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zain',
+    designation: 'Senior UI/UX Designer',
+    nicNumber: '35202-1122334-3',
+    contactNumber: '+92 333 1122334',
+    permanentAddress: 'House #789, Johar Town, Lahore',
+    currentAddress: 'House #789, Johar Town, Lahore',
+    personalEmail: 'zain.ahmed.design@gmail.com',
+    bankName: 'Bank Alfalah',
+    ibanNumber: 'PK45ALFH0011223344556677',
+    dateOfBirth: '1997-11-05',
+    salary: 'PKR 180,000',
+    technicalSkills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping', 'Visual Design']
   }
 ];
 
